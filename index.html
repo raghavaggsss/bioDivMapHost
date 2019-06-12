@@ -1,1 +1,42 @@
-<div id="app"></div>
+<html>
+<head>
+    <title>A Leaflet map!</title>
+    <link rel="stylesheet" href="./leaflet/leaflet.css"/>
+<!--    <link rel="stylesheet" href="./Leaflet.markercluster-1.4.1/dist/MarkerCluster.Default.css"/>-->
+    <script src="./leaflet/leaflet.js"></script>
+    <script src="./Leaflet.markercluster-1.4.1/dist/leaflet.markercluster.js"></script>
+    <script src="jquery.min.js"></script>
+    <style>
+        #map {
+            width: 900px;
+            height: 500px;
+        }
+    </style>
+</head>
+<body>
+
+<style>
+		.endangered {
+			width: 80px;
+			height: 40px;
+			background-color: red;
+			text-align: center;
+			font-size: 10px;
+		}
+
+        .not_endangered {
+			width: 80px;
+			height: 40px;
+			background-color: greenyellow;
+			text-align: center;
+			font-size: 10px;
+		}
+
+	</style>
+
+<div id="map"></div>
+
+<script src="./leaflet_map.js"></script>
+
+</body>
+</html>
