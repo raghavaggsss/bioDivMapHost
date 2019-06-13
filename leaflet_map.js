@@ -16,6 +16,41 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
         minZoom: 2
     }).addTo(map);
 
+
+function ajax (keyword) { //AJAX request
+	$.ajax({
+		url: "https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=" + keyword + "&prop=info&inprop=url&utf8=&format=json",
+		dataType: "jsonp",
+		success: function(response) {
+			// console.log(response.query);
+			if (response.query.searchinfo.totalhits === 0) {
+				alert("No results");
+			}
+
+			else {
+				showResults(response);
+			}
+		},
+		error: function () {
+			alert("Error retrieving search results, please refresh the page");
+		}
+	});
+}
+
+function showResults(callback) {
+    var title = callback.query.search[0].title;
+    var url = title.replace(/ /g, "_");
+    window.open("https://en.wikipedia.org/wiki/" + url, "_blank");
+}
+
+
+
+// openNewWindow = function(species)
+// {
+//
+//  window.open("http://www.google.com/", "_blank");
+// };
+
 // load GeoJSON from an external file
 // var points_data;
 $.getJSON("gbif_tot.geojson", function (data) {
@@ -28,7 +63,20 @@ $.getJSON("gbif_tot.geojson", function (data) {
         pointToLayer: function (feature, latlng) {
             var marker = L.marker(latlng, {icon: dotIcon});
             // var marker = L.marker(latlng, {title: ""});
-            marker.bindPopup(feature.properties.species + '<br/>' + feature.properties.common);
+            var redList = feature.properties.redList;
+            var markerPopUp = '<div class="popUpfeature">' + feature.properties.species + '<br/> <b>'
+                + feature.properties.common + '</b>';
+            if (redList) {
+                markerPopUp += '<div class="redListFont">' + '<br/>' + feature.properties.redList + '</div>';
+            }
+
+            markerPopUp += '<br/>';
+
+            markerPopUp += '<input type="button" value="Wiki" onClick="ajax(\'' + feature.properties.species + '\')" />';
+
+            markerPopUp += '</div>';
+
+            marker.bindPopup(markerPopUp);
             return marker;
         }
     });
@@ -43,11 +91,15 @@ $.getJSON("gbif_tot.geojson", function (data) {
                     break;
                 }
             }
+            var num_children = cluster.getChildCount();
+            if (num_children == 1) {
+                num_children = "";
+            }
             if (endangered) {
-                return L.divIcon({ html: cluster.getChildCount(), className: 'endangered'});
+                return L.divIcon({ html: num_children, className: 'endangered', iconSize: 15});
             }
             else {
-                return L.divIcon({ html: cluster.getChildCount(), className: 'not_endangered' });
+                return L.divIcon({ html: num_children, className: 'not_endangered', iconSize: 15 });
             }
 
 
